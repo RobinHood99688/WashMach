@@ -47,9 +47,13 @@
 
 const char heart_pong[] = {0xaa, 0x06, 0x00, 0x9f, 0x02, 0x02, 0x3c, 0xc5};
 const char heart_ping[] = {0xaa, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x7f, 0x30};
+
 const char spin_dry[] = {0xaa, 0x06, 0x01, 0x98, 0x04, 0x00, 0x75, 0x03};
+const char fb_spin_dry[] = {0xaa, 0x06, 0x00, 0x9f, 0x04, 0x00, 0xfb, 0xcc};
 const char speed_wash[] = {0xaa, 0x06, 0x01, 0x98, 0x03, 0x01, 0xd0, 0xac};
+const char fb_speed_wash[] = {0xaa, 0x06, 0x00, 0x9f, 0x03, 0x01, 0x5e, 0x63};
 const char standard_wash[] = {0xaa, 0x06, 0x01, 0x98, 0x02, 0x02, 0xb2, 0x0a};
+const char fb_standard_wash[] = {0xaa, 0x06, 0x00, 0x9f, 0x02, 0x02, 0x3c, 0xc5};
 
 /* USER CODE END PM */
 
@@ -125,7 +129,16 @@ void button2_longPress_callback(void* context)
     HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_SET);
     HAL_Delay(600);
     HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_RESET);
-    HAL_Delay(500);
+
+    HAL_Delay(3000);
+    switch(*mode)
+    {
+        case 0: HAL_UART_Transmit(&huart1, (uint8_t *)fb_spin_dry, sizeof(fb_spin_dry), 0x1000); break;
+        case 1: HAL_UART_Transmit(&huart1, (uint8_t *)fb_speed_wash, sizeof(fb_speed_wash), 0x1000); break;
+        case 2: HAL_UART_Transmit(&huart1, (uint8_t *)fb_standard_wash, sizeof(fb_standard_wash), 0x1000); break;
+        default: break;
+    }
+
     HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_SET);
     HAL_Delay(300);
     HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_RESET);
